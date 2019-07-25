@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*- 
 
 import spider
+import paint
 
-s = spider.VGSpider()
-s.scrape_news_topics()
+p = paint.VGPaint()
+p.paint_picture("display")
+
+
+# s = spider.VGSpider()
+# s.scrape_news_topics()
 
 # from cv2 import cv2
 # import numpy
