@@ -3,9 +3,12 @@
 import requests
 import bs4
 
+import os
+print(os.sys.path)
+
 url="https://news.yahoo.co.jp/topics/world"
 
-data = requests.get(url)
+data = requests.get(url，verytify =  False)
 
 soup = bs4.BeautifulSoup(data.text,'lxml')
 li_list = soup("li", "newsFeed_item")
