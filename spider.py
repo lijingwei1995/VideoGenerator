@@ -3,22 +3,23 @@
 import requests
 import bs4
 
-# 新闻列表页
+class VGSpider:
+    def scrape_news_topics(self, category="world"):
+        # 新闻列表页
+        url="https://news.yahoo.co.jp/topics/" + category
+        data = requests.get(url)
+        soup = bs4.BeautifulSoup(data.text,'lxml')
+        li_list = soup("li", "newsFeed_item")
 
-url="https://news.yahoo.co.jp/topics/world"
-data = requests.get(url)
-soup = bs4.BeautifulSoup(data.text,'lxml')
-li_list = soup("li", "newsFeed_item")
+        for li in li_list:
+            
+                title = li.find("div", "newsFeed_item_title")
+                a = li.find("a", "newsFeed_item_link")
 
-for li in li_list:
-    
-        title = li.find("div", "newsFeed_item_title")
-        a = li.find("a", "newsFeed_item_link")
-
-        if title != None:
-            print(title.text)
-        if a != None:  
-            print(a['href'])
+                if title != None:
+                    print(title.text)
+                if a != None:  
+                    print(a['href'])
 
 # pick up页
 # url="https://news.yahoo.co.jp/pickup/6331061"
