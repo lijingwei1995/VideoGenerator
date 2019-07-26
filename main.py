@@ -2,10 +2,22 @@
 
 import spider
 import paint
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+import gui
 
-p = paint.VGPaint()
-p.paint_picture("display")
+app = QApplication(sys.argv)
+window = gui.mainwindow()
+window.show()
+sys.exit(app.exec_())
 
+# app = QApplication(sys.argv)
+# ex = Ui_hello.Ui_Dialog()
+# sys.exit(app.exec_())
+
+
+# p = paint.VGPaint()
+# p.paint_picture("display")
 
 # s = spider.VGSpider()
 # s.scrape_news_topics()
