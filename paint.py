@@ -8,7 +8,9 @@ import cv2
 
 class VGPaint:
     def __init__(self):
-        self.font = ImageFont.truetype("font/font1.otf", 20)
+        self.font_file = "font/font1.otf"
+        self.font_size = 18
+        self.font = ImageFont.truetype(self.font_file, self.font_size)
 
     def paint_picture(self, method = "display"):
         im = Image.open("comment_template.png")
@@ -19,7 +21,13 @@ class VGPaint:
         box_width = 550
         box_height = 150
 
-        text = "1981年，六小龄童参演\n首部电影《阿Q正传》上映。1986年，他主演的古装神话剧《西游记》播出，他因该剧被大众熟知，并获得第六届中国金鹰奖最佳男主角奖 [2-3]  。1993年秋，在电视连续剧《猴娃》中饰演其父六龄童，六小龄童凭借该剧获得中国第十二届“金鹰奖”最佳男配角奖 [4]  。2000年，其主演的古装神话剧《西游记续集》播出，他凭借该剧获得中央电视台颁发的全国十佳优秀演员奖。2003年，在古装武侠剧《连城诀》饰演花铁干，这是他首次饰演反派角色 [5]  。2007年6月，在古装历史神话剧《吴承恩与西游记》中同时饰演吴承恩和孙悟空两个角色 [6-7]  。2009年，参演历史军事情感剧《北平战与和》 [8]  。2015，参演古装神话剧《石敢当之雄峙天东》 [9]  。"
+        text = "介護は過酷労働。\
+親族すら投げ出し施設に入れるんだから。 \
+介護が世界で一番稼げる職業ならまだしも下から数えた方が早い低賃金職業でしょ。\
+お金抜きになると、本当に介護という職業に覚悟と誇りと使命感があるから。\
+それらがない人は絶対にやらない方がいい。\
+いつしか殺意に変わり人の命を奪ってしまう。\
+不幸しか生まれない。"
 
         self.paint_box(draw, box_position, box_width, box_height, "black")
         self.paint_textbox(draw, box_position, box_width, box_height, text, "black", self.font)
@@ -35,8 +43,12 @@ class VGPaint:
         draw.rectangle(xy, outline = color)
 
     def paint_textbox(self, draw, position, width, height, text, color, font):
-        # xy = ((position[0], position[1]), (position[0] + width, position[1] + height))
-        draw.multiline_text(position, text, color, font)
+
+        import textwrap
+
+        lines = textwrap.fill(text, width = 30)
+
+        draw.multiline_text(position, lines, color, font)
 
 
 
