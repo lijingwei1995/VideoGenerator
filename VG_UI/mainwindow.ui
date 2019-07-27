@@ -86,6 +86,16 @@
 当前目标：雅虎（日本）新闻，请选择新闻类别</string>
       </property>
      </widget>
+     <widget class="QComboBox" name="P1_CB_CAT">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>251</width>
+        <height>26</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_2">
      <widget class="QLabel" name="label_2">

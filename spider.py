@@ -4,6 +4,20 @@ import requests
 import bs4
 
 class VGSpider:
+    category_dict = {}
+    def __init__(self):
+        # 新闻类别
+        self.category_list = [
+            ("国际", "world"),
+            ("国内", "domestic"),
+            ("经济", "business"),
+            ("娱乐", "entertainment"),
+            ("体育", "sports"),
+            ("科技", "it"),
+            ("科学", "science"),
+            ("地区", "local")
+        ]
+
     def scrape_news_topics(self, category="world"):
         # 新闻列表页
         url="https://news.yahoo.co.jp/topics/" + category
@@ -42,9 +56,9 @@ class VGSpider:
 
 # 创建参数包
 # parameter = {
-#     "keys" : div['data-keys'],
-#     "full_page_url" : url,
-#     "comment_num" : 20
+#     "keys", div['data-keys'],
+#     "full_page_url", url,
+#     "comment_num", 20
 # }
 # url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
 # data = requests.get(url, parameter)

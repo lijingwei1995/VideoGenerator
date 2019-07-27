@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*- 
 
-import spider
-import paint
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+from PyQt5.QtWidgets import QApplication, QMainWindow
 import gui
 
 app = QApplication(sys.argv)
