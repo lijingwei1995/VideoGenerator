@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>700</width>
+    <height>450</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
       <x>30</x>
       <y>0</y>
       <width>20</width>
-      <height>351</height>
+      <height>421</height>
      </rect>
     </property>
     <property name="orientation">
@@ -67,8 +67,8 @@
      <rect>
       <x>50</x>
       <y>10</y>
-      <width>541</width>
-      <height>341</height>
+      <width>641</width>
+      <height>391</height>
      </rect>
     </property>
     <widget class="QWidget" name="page">
@@ -114,15 +114,15 @@
        <rect>
         <x>0</x>
         <y>120</y>
-        <width>531</width>
-        <height>221</height>
+        <width>641</width>
+        <height>271</height>
        </rect>
       </property>
      </widget>
      <widget class="QPushButton" name="P1_B_SELECT">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>560</x>
         <y>90</y>
         <width>80</width>
         <height>26</height>
@@ -144,7 +144,23 @@
        </rect>
       </property>
       <property name="text">
-       <string>修改新闻翻译页</string>
+       <string>打印新闻封面</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="P2_B_PRINT">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>0</y>
+        <width>80</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打印</string>
       </property>
      </widget>
     </widget>
@@ -172,7 +188,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>700</width>
      <height>23</height>
     </rect>
    </property>

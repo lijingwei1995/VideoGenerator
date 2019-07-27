@@ -1,5 +1,7 @@
-from PyQt5 import QtGui, QtWidgets, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtWebEngineWidgets import *
 
 from spider import VGSpider
 from paint import VGPaint
@@ -22,13 +24,13 @@ class mainwindow(QMainWindow):
         ]
         self.current_button = self.B1
         self.current_button.setEnabled(False)
-
         # 换页事件
         for button in self.nav_buttons:
             button.clicked.connect(self.change_page)
         
         # 各分页事件
         self.set_actions_page1()
+        self.set_actions_page2()
 
     def change_page(self):
         # QMessageBox.about(self, "click", "yes")
@@ -63,3 +65,16 @@ class mainwindow(QMainWindow):
         row = self.P1_LW_NEWS.currentRow()
         if row != -1:
             print(self.news_list[row][1])
+
+    ##### page2 #####
+    def set_actions_page2(self):
+        self.P2_WEV = QWebEngineView(self.page_2)
+        self.P2_WEV.setGeometry(QtCore.QRect(0, 30, 640, 270))
+        self.P2_WEV.load(QUrl('https://news.yahoo.co.jp/pickup/6331434'))
+        self.P2_WEV.loadFinished.connect(self.page2_WEV_load_finished)
+        
+
+    def page2_WEV_load_finished(self):
+        self.P2_WEV.page().runJavaScript("window.scrollTo(0,215);")
+        self.P2_B_PRINT.setEnabled(True)
+        
