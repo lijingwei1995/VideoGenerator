@@ -4,7 +4,6 @@ import requests
 import bs4
 
 class VGSpider:
-    category_dict = {}
     def __init__(self):
         # 新闻类别
         self.category_list = [
@@ -25,15 +24,18 @@ class VGSpider:
         soup = bs4.BeautifulSoup(data.text,'lxml')
         li_list = soup("li", "newsFeed_item")
 
-        for li in li_list:
-            
-                title = li.find("div", "newsFeed_item_title")
-                a = li.find("a", "newsFeed_item_link")
+        return [
+            (
+                li.find("div", "newsFeed_item_title").text,
+                li.find("a", "newsFeed_item_link")['href']
+            )
+            for li in li_list
+            if li.find("div", "newsFeed_item_title") is not None and \
+                li.find("a", "newsFeed_item_link") is not None
+        ]
 
-                if title != None:
-                    print(title.text)
-                if a != None:  
-                    print(a['href'])
+        
+        
 
 # pick up页
 # url="https://news.yahoo.co.jp/pickup/6331061"

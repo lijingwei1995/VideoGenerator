@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>VideoGenerator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="B1">
@@ -96,6 +96,42 @@
        </rect>
       </property>
      </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>321</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>请选择新闻：</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="P1_LW_NEWS">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>120</y>
+        <width>531</width>
+        <height>221</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="P1_B_SELECT">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>90</y>
+        <width>80</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>确定</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_2">
      <widget class="QLabel" name="label_2">
@@ -142,7 +178,7 @@
    </property>
    <widget class="QMenu" name="menuVideo_Generator">
     <property name="title">
-     <string>Video Generator</string>
+     <string>Menu</string>
     </property>
    </widget>
    <addaction name="menuVideo_Generator"/>

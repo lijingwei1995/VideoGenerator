@@ -41,10 +41,25 @@ class mainwindow(QMainWindow):
 
     ##### page1 #####
     def set_actions_page1(self):
+        self.category = "world"
         for category_tuple in self.spider.category_list:
             self.P1_CB_CAT.addItem(category_tuple[0], category_tuple[1])
         self.P1_CB_CAT.currentIndexChanged.connect(self.page1_CB_CAT_changed)
+        self.P1_B_SELECT.clicked.connect(self.page1_B_SELECT_clicked)
+
+        self.page1_LW_NEWS_update() # 默认执行一次采集
 
     def page1_CB_CAT_changed(self):
+        self.P1_LW_NEWS.clear()
         self.category = self.sender().currentData()
-        self.spider.scrape_news_topics(self.category)
+        self.page1_LW_NEWS_update()
+    
+    def page1_LW_NEWS_update(self):
+        self.news_list = self.spider.scrape_news_topics(self.category)
+        for news_tuple in self.news_list:
+            self.P1_LW_NEWS.addItem(news_tuple[0])
+
+    def page1_B_SELECT_clicked(self):
+        row = self.P1_LW_NEWS.currentRow()
+        if row != -1:
+            print(self.news_list[row][1])
