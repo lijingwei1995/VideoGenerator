@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import *
 
@@ -106,9 +107,15 @@ class mainwindow(QMainWindow):
         self.P2_L_TITLE.setAlignment(QtCore.Qt.AlignCenter)
         self.P2_L_TITLE.setObjectName("P2_L_TITLE")
         
+        # "打印"按钮的槽
+        self.P2_B_PRINT.clicked.connect(self.page2_B_PRINT_clicked)
 
     def page2_WEV_load_finished(self):
         self.P2_WEV.page().runJavaScript("window.scrollTo(0,215);")
         self.P2_WEV.show()
         self.P2_B_PRINT.setText("打印")
         self.P2_B_PRINT.setEnabled(True)
+
+    def page2_B_PRINT_clicked(self):
+        pixmap = self.page_2.grab(QtCore.QRect(2, 30, 640-15-2, 270-15))
+        pixmap.save("cache/cover.png", "png")
