@@ -27,19 +27,29 @@ class mainwindow(QMainWindow):
         self.current_button.setEnabled(False)
         # 换页事件
         for button in self.nav_buttons:
-            button.clicked.connect(self.change_page)
+            button.clicked.connect(self.change_to_next_page)
         
         # 各分页事件
         self.set_actions_page1()
         self.set_actions_page2()
+        self.set_actions_page3()
 
-    def change_page(self):
-        # QMessageBox.about(self, "click", "yes")
-        button_page = self.sender().property("page_num")
+    # def change_page(self):
+    #     # QMessageBox.about(self, "click", "yes")
+    #     button_page = self.sender().property("page_num")
+    #     self.stackedWidget.setCurrentIndex(button_page - 1)
+    #     # 按钮状态变换
+    #     self.current_button.setEnabled(True)
+    #     self.current_button = self.sender()
+    #     self.current_button.setEnabled(False)
+
+    def change_to_next_page(self, next_button):
+        if next_button is False:
+            next_button = self.sender()
+        button_page = next_button.property("page_num")
         self.stackedWidget.setCurrentIndex(button_page - 1)
-        # 按钮状态变换
         self.current_button.setEnabled(True)
-        self.current_button = self.sender()
+        self.current_button = next_button
         self.current_button.setEnabled(False)
 
     ##### page1 #####
@@ -73,9 +83,7 @@ class mainwindow(QMainWindow):
             self.P2_LE_TITLE.setText(self.news_title)
             self.P2_L_TITLE.setText(self.news_title)
             # 页面1 -> 页面2
-            self.stackedWidget.setCurrentIndex(1)
-            self.B1.setEnabled(True)
-            self.B2.setEnabled(False)
+            self.change_to_next_page(self.B2)
 
     ##### page2 #####
     def set_actions_page2(self):
@@ -117,5 +125,38 @@ class mainwindow(QMainWindow):
         self.P2_B_PRINT.setEnabled(True)
 
     def page2_B_PRINT_clicked(self):
+        # 截图，保存
         pixmap = self.page_2.grab(QtCore.QRect(2, 30, 640-15-2, 270-15))
         pixmap.save("cache/cover.png", "png")
+        # 获取新闻摘要和评论地址
+        self.pickup, self.comment_page_url = self.spider.scrape_news_pickup(self.pickup_url)
+
+        if self.comment_page_url is None:
+            QMessageBox.about(self, "错误", "此新闻不含有评论")
+
+        # 传递值
+        self.P3_TB_PICKUP.setText(self.pickup)
+        self.P3_PTE_PICKUP.setPlainText(self.pickup)
+        # 页面2 -> 页面3
+        self.change_to_next_page(self.B3)
+
+    ##### page3 #####
+    def set_actions_page3(self):
+        # 确定键
+        self.P3_B_CONFIRM.clicked.connect(self.page3_B_CONFIRM_clicked)
+
+    def page3_B_CONFIRM_clicked(self):
+        pixmap = QPixmap()
+        pixmap.load("pickup_template.png")
+        painter = QPainter()
+        painter.begin(pixmap)
+        # title
+        painter.setFont(QFont("Noto Sans Mono CJK", 20))
+        painter.drawText(20, 120, self.news_title)
+        # pickup
+        painter.setFont(QFont("Noto Sans Mono CJK", 14))
+        option = QTextOption(Qt.AlignJustify)
+        option.setWrapMode(QTextOption.WordWrap)
+        painter.drawText(QtCore.QRectF(20, 140, 580, 330), self.P3_PTE_PICKUP.toPlainText(), option)
+        painter.end()
+        pixmap.save("cache/pickup.png", "png")

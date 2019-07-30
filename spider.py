@@ -21,7 +21,7 @@ class VGSpider:
         # 新闻列表页
         url="https://news.yahoo.co.jp/topics/" + category
         data = requests.get(url)
-        soup = bs4.BeautifulSoup(data.text,'lxml')
+        soup = bs4.BeautifulSoup(data.text, 'lxml')
         li_list = soup("li", "newsFeed_item")
 
         return [
@@ -32,17 +32,22 @@ class VGSpider:
             for li in li_list
             if li.find("div", "newsFeed_item_title") is not None and \
                 li.find("a", "newsFeed_item_link") is not None
-        ]
+        ]     
 
-        
-        
+    def scrape_news_pickup(self, url):
+        # pick up页
+        data = requests.get(url)
+        soup = bs4.BeautifulSoup(data.text,'lxml')
+        p = soup.find("p", "tpcNews_summary")
+        # p2 = soup.find("p", "tpcNews_detailLink")
+        # return p.text, p2.a['href']
 
-# pick up页
-# url="https://news.yahoo.co.jp/pickup/6331061"
-# data = requests.get(url)
-# soup = bs4.BeautifulSoup(data.text,'lxml')
-# div = soup.find("div", "news-comment-plugin")
-# print(div['data-full-page-url'])
+        div = soup.find("div", "news-comment-plugin")
+
+        if div is None:
+            return p.text, div
+        else:
+            return p.text, div['data-full-page-url']
 
 # comment页
 # 由于是动态页面，需要模拟ajax

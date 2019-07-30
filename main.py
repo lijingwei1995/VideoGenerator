@@ -15,7 +15,7 @@ sys.exit(app.exec_())
 
 
 # p = paint.VGPaint()
-# p.paint_picture("display")
+# p.paint_picture("display")5
 
 # s = spider.VGSpider()
 # s.scrape_news_topics()

@@ -20,20 +20,12 @@ class VGPaint:
         box_position = (70, 15)
         box_width = 550
         box_height = 150
-
-        text = "介護は過酷労働。\
-親族すら投げ出し施設に入れるんだから。 \
-介護が世界で一番稼げる職業ならまだしも下から数えた方が早い低賃金職業でしょ。\
-お金抜きになると、本当に介護という職業に覚悟と誇りと使命感があるから。\
-それらがない人は絶対にやらない方がいい。\
-いつしか殺意に変わり人の命を奪ってしまう。\
-不幸しか生まれない。"
+        text = ""
 
         self.paint_box(draw, box_position, box_width, box_height, "black")
         self.paint_textbox(draw, box_position, box_width, box_height, text, "black", self.font)
         
         if method == "display":
-
             im.show()
         elif method == "file":
             pass
@@ -43,15 +35,9 @@ class VGPaint:
         draw.rectangle(xy, outline = color)
 
     def paint_textbox(self, draw, position, width, height, text, color, font):
-
         import textwrap
-
         lines = textwrap.fill(text, width = 30)
-
         draw.multiline_text(position, lines, color, font)
-
-
-
 
 
 # import textwrap
