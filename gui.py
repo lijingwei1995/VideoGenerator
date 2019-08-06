@@ -33,6 +33,7 @@ class mainwindow(QMainWindow):
         self.set_actions_page1()
         self.set_actions_page2()
         self.set_actions_page3()
+        self.set_actions_page4()
 
     # def change_page(self):
     #     # QMessageBox.about(self, "click", "yes")
@@ -118,6 +119,9 @@ class mainwindow(QMainWindow):
         # "打印"按钮的槽
         self.P2_B_PRINT.clicked.connect(self.page2_B_PRINT_clicked)
 
+        # "滚动"按钮的槽
+        self.P2_B_SCROLL.clicked.connect(lambda: self.P2_WEV.page().runJavaScript("window.scrollTo(0,215);"))
+
     def page2_WEV_load_finished(self):
         self.P2_WEV.page().runJavaScript("window.scrollTo(0,215);")
         self.P2_WEV.show()
@@ -146,6 +150,7 @@ class mainwindow(QMainWindow):
         self.P3_B_CONFIRM.clicked.connect(self.page3_B_CONFIRM_clicked)
 
     def page3_B_CONFIRM_clicked(self):
+        # 画新闻摘要
         pixmap = QPixmap()
         pixmap.load("pickup_template.png")
         painter = QPainter()
@@ -160,3 +165,42 @@ class mainwindow(QMainWindow):
         painter.drawText(QtCore.QRectF(20, 140, 580, 330), self.P3_PTE_PICKUP.toPlainText(), option)
         painter.end()
         pixmap.save("cache/pickup.png", "png")
+
+        # 抓取评论
+        self.comment_num = 20
+        self.current_comment = 0
+        self.news_comments = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
+        self.news_comments_t = self.news_comments[:] # translate
+        # 传递
+        self.change_comment(self.current_comment)
+        # 页面3 -> 页面4
+        self.change_to_next_page(self.B4)
+
+    ##### page4 #####
+    def set_actions_page4(self):
+        # 前后按钮
+        self.P4_B_NEXT.clicked.connect(lambda: self.change_comment(self.current_comment + 1))
+        self.P4_B_PREVIOUS.clicked.connect(lambda: self.change_comment(self.current_comment - 1))
+    
+    def change_comment(self, index):
+        # 保存翻译编辑框值
+        if self.P4_PTE_COMMENT.toPlainText() != "":
+            self.news_comments_t[self.current_comment] = self.P4_PTE_COMMENT.toPlainText()
+        # 值传递
+        self.current_comment = index
+        # 编辑框赋值
+        self.P4_TB_COMMENT.setText(self.news_comments[self.current_comment])
+        self.P4_PTE_COMMENT.setPlainText(self.news_comments_t[self.current_comment])
+        # 数字显示
+        self.P4_L_NUMBER.setText(str(self.current_comment+1) + "/" + str(self.comment_num))
+        # 按钮可点性
+        # PREVIOUS
+        if self.current_comment == 0:
+            self.P4_B_PREVIOUS.setEnabled(False)
+        else:
+            self.P4_B_PREVIOUS.setEnabled(True)
+        # NEXT
+        if self.current_comment == self.comment_num - 1:
+            self.P4_B_NEXT.setEnabled(False)
+        else:
+            self.P4_B_NEXT.setEnabled(True)

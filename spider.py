@@ -16,9 +16,9 @@ class VGSpider:
             ("科学", "science"),
             ("地区", "local")
         ]
-
-    def scrape_news_topics(self, category="world"):
-        # 新闻列表页
+    
+    # 新闻列表页
+    def scrape_news_topics(self, category="world"):    
         url="https://news.yahoo.co.jp/topics/" + category
         data = requests.get(url)
         soup = bs4.BeautifulSoup(data.text, 'lxml')
@@ -34,8 +34,8 @@ class VGSpider:
                 li.find("a", "newsFeed_item_link") is not None
         ]     
 
+    # pick up页
     def scrape_news_pickup(self, url):
-        # pick up页
         data = requests.get(url)
         soup = bs4.BeautifulSoup(data.text,'lxml')
         p = soup.find("p", "tpcNews_summary")
@@ -49,28 +49,28 @@ class VGSpider:
         else:
             return p.text, div['data-full-page-url']
 
-# comment页
-# 由于是动态页面，需要模拟ajax
-# # 格式：
-# 网址："https://news.yahoo.co.jp/comment/plugin/v1/full/"
-# 最简参数："keys", "full_page_url", "comment_num"
+    # comment页
+    # 由于是动态页面，需要模拟ajax
+    # # 格式：
+    # 网址："https://news.yahoo.co.jp/comment/plugin/v1/full/"
+    # 最简参数："keys", "full_page_url", "comment_num"
+    def scrape_news_comments(self, url, comment_num):
+        # 抓取key
+        data = requests.get(url)
+        soup = bs4.BeautifulSoup(data.text,'lxml')
+        div = soup.find("div", "news-comment-plugin")
 
-# 抓取key
-# url="https://headlines.yahoo.co.jp/cm/main?d=20190724-00000067-kyodonews-int"
-# data = requests.get(url)
-# soup = bs4.BeautifulSoup(data.text,'lxml')
-# div = soup.find("div", "news-comment-plugin")
-
-# 创建参数包
-# parameter = {
-#     "keys", div['data-keys'],
-#     "full_page_url", url,
-#     "comment_num", 20
-# }
-# url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
-# data = requests.get(url, parameter)
-# soup = bs4.BeautifulSoup(data.text,'lxml')
-# span_list = soup("span", "cmtBody")
-# for span in span_list:
-#     print(span.text + '\n')
+        # 创建参数包
+        parameter = {
+            "keys" : div['data-keys'],
+            "full_page_url" : url,
+            "comment_num" : comment_num
+        }
+        url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
+        data = requests.get(url, parameter)
+        soup = bs4.BeautifulSoup(data.text,'lxml')
+        span_list = soup("span", "cmtBody")
+        
+        return [span.text for span in span_list]
+    
 
