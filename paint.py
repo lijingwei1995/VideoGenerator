@@ -3,6 +3,7 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+from PIL import ImageFilter
 
 import cv2
 
@@ -39,6 +40,14 @@ class VGPaint:
         lines = textwrap.fill(text, width = 30)
         draw.multiline_text(position, lines, color, font)
 
+    ### 自定义处理
+    def handle_cover_picture(self):
+        # 由原图生成高斯模糊+拉伸的背景
+        im = Image.open("cache/cover.png")
+        im_bg = im.resize((623, 350))
+        im_bg = im_bg.filter(ImageFilter.GaussianBlur(10))
+        im_bg.paste(im, (0, int((350-255)/2)))
+        im_bg.save("cache/cover_f.png")
 
 # import textwrap
 # lines = textwrap.wrap(text, width=40)

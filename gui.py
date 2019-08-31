@@ -6,6 +6,7 @@ from PyQt5.QtWebEngineWidgets import *
 
 from spider import VGSpider
 from paint import VGPaint
+from translator import VGTranslator
 
 class mainwindow(QMainWindow):
     def __init__(self):
@@ -13,6 +14,7 @@ class mainwindow(QMainWindow):
         # 生成spider和paint类
         self.spider = VGSpider()
         self.paint = VGPaint()
+        self.translator = VGTranslator()
 
         uic.loadUi("VG_UI/mainwindow.ui", self)
         self.set_actions()
@@ -78,6 +80,8 @@ class mainwindow(QMainWindow):
         if row != -1:
             self.news_title = self.news_list[row][0]
             self.pickup_url = self.news_list[row][1]
+            # 翻译封面
+            self.news_title = self.translator.translate(self.news_title)
             # 页面2读取新闻封面
             self.P2_WEV.load(QUrl(self.pickup_url))
             # 将标题传给页面2的Line Edit
@@ -132,15 +136,18 @@ class mainwindow(QMainWindow):
         # 截图，保存
         pixmap = self.page_2.grab(QtCore.QRect(2, 30, 640-15-2, 270-15))
         pixmap.save("cache/cover.png", "png")
+        self.paint.handle_cover_picture()
         # 获取新闻摘要和评论地址
         self.pickup, self.comment_page_url = self.spider.scrape_news_pickup(self.pickup_url)
+
+        self.pickup_t = self.translator.translate(self.pickup)
 
         if self.comment_page_url is None:
             QMessageBox.about(self, "错误", "此新闻不含有评论")
 
         # 传递值
         self.P3_TB_PICKUP.setText(self.pickup)
-        self.P3_PTE_PICKUP.setPlainText(self.pickup)
+        self.P3_PTE_PICKUP.setPlainText(self.pickup_t)
         # 页面2 -> 页面3
         self.change_to_next_page(self.B3)
 
@@ -169,8 +176,8 @@ class mainwindow(QMainWindow):
         # 抓取评论
         self.comment_num = 20
         self.current_comment = 0
-        self.news_comments = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
-        self.news_comments_t = self.news_comments[:] # translate
+        self.news_comments, self.news_authors = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
+        self.news_comments_t = self.translator.translate_list(self.news_comments[:]) # translate
         # 传递
         self.change_comment(self.current_comment)
         # 页面3 -> 页面4
@@ -181,6 +188,8 @@ class mainwindow(QMainWindow):
         # 前后按钮
         self.P4_B_NEXT.clicked.connect(lambda: self.change_comment(self.current_comment + 1))
         self.P4_B_PREVIOUS.clicked.connect(lambda: self.change_comment(self.current_comment - 1))
+        # 完成按钮
+        self.P4_B_FINISH.clicked.connect(self.page4_B_FINISH_clicked)
     
     def change_comment(self, index):
         # 保存翻译编辑框值
@@ -204,3 +213,30 @@ class mainwindow(QMainWindow):
             self.P4_B_NEXT.setEnabled(False)
         else:
             self.P4_B_NEXT.setEnabled(True)
+
+    def page4_B_FINISH_clicked(self):
+        for i in range(self.comment_num):
+            a = self.news_authors[i]
+            c = self.news_comments[i]
+            ct = self.news_comments_t[i]
+
+            # 生成评论图片
+            pixmap = QPixmap()
+            pixmap.load("comment_template2.png")
+            painter = QPainter()
+            painter.begin(pixmap)
+            # author
+            painter.setFont(QFont("Noto Sans Mono CJK", 10))
+            painter.drawText(70, 25, a)
+            # comments & translate
+            painter.setFont(QFont("Noto Sans Mono CJK", 12))
+            option = QTextOption(Qt.AlignJustify)
+            option.setWrapMode(QTextOption.WordWrap)
+            painter.drawText(QtCore.QRectF(70, 45, 540, 135), c, option)
+            painter.setPen(Qt.red)
+            painter.drawText(QtCore.QRectF(70, 180, 540, 330), ct, option)
+            
+            painter.end()
+            pixmap.save("cache/comment"+str(i+1)+".png", "png")
+        
+

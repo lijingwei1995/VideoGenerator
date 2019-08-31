@@ -69,8 +69,21 @@ class VGSpider:
         url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
         data = requests.get(url, parameter)
         soup = bs4.BeautifulSoup(data.text,'lxml')
-        span_list = soup("span", "cmtBody")
         
-        return [span.text for span in span_list]
+        # 生成评论列表
+        span_list = soup("span", "cmtBody")
+        comments = [span.text for span in span_list]
+
+        # 生成作者列表
+        h1_list = soup("h1", "yjxName")
+        authors = [h1.text for h1 in h1_list]
+
+        return comments, authors
     
 
+# 测试代码
+# if __name__ == "__main__":
+#     v = VGSpider()
+#     url = "https://headlines.yahoo.co.jp/cm/main?d=20190830-00000119-jij-int"
+#     c, a = v.scrape_news_comments(url, 20)
+#     print(a)
