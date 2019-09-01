@@ -55,6 +55,7 @@ class VGSpider:
     # 网址："https://news.yahoo.co.jp/comment/plugin/v1/full/"
     # 最简参数："keys", "full_page_url", "comment_num"
     def scrape_news_comments(self, url, comment_num):
+        print(url)
         # 抓取key
         data = requests.get(url)
         soup = bs4.BeautifulSoup(data.text,'lxml')
@@ -64,7 +65,7 @@ class VGSpider:
         parameter = {
             "keys" : div['data-keys'],
             "full_page_url" : url,
-            "comment_num" : comment_num
+            "comment_num" : comment_num * 2
         }
         url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
         data = requests.get(url, parameter)
@@ -78,7 +79,22 @@ class VGSpider:
         h1_list = soup("h1", "yjxName")
         authors = [h1.text for h1 in h1_list]
 
-        return comments, authors
+        if(len(comments) < comment_num):
+            raise Exception("评论数不足"+str(comment_num)+"!")
+
+        # 控制最大评论长度
+        max_comment_length = 130
+        c = []
+        a = []
+        for i in range(comment_num * 2):
+            if len(comments[i]) <= max_comment_length:
+                c.append(comments[i])
+                a.append(authors[i])
+
+        if(len(c) < comment_num):
+            raise Exception("合格评论数不足"+str(comment_num)+"!")
+
+        return c[0:comment_num], a[0:comment_num]
     
 
 # 测试代码

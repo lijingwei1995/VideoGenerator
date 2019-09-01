@@ -8,6 +8,8 @@ from spider import VGSpider
 from paint import VGPaint
 from translator import VGTranslator
 
+import os
+
 class mainwindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -95,7 +97,7 @@ class mainwindow(QMainWindow):
         # 生成WebEngineView及Mask
         self.P2_WEV = QWebEngineView(self.page_2)
         self.P2_WEV.setGeometry(QtCore.QRect(0, 30, 640, 270))
-        self.P2_WEV.hide() 
+        # self.P2_WEV.hide() 
         self.P2_WEV_MASK = QWidget(self.page_2)
         self.P2_WEV_MASK.setGeometry(QtCore.QRect(0, 30, 640, 270))
         self.P2_WEV.loadFinished.connect(self.page2_WEV_load_finished)
@@ -176,12 +178,16 @@ class mainwindow(QMainWindow):
         # 抓取评论
         self.comment_num = 20
         self.current_comment = 0
-        self.news_comments, self.news_authors = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
-        self.news_comments_t = self.translator.translate_list(self.news_comments[:]) # translate
-        # 传递
-        self.change_comment(self.current_comment)
-        # 页面3 -> 页面4
-        self.change_to_next_page(self.B4)
+        try:
+            self.news_comments, self.news_authors = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
+            self.news_comments_t = self.translator.translate_list(self.news_comments[:]) # translate
+        except Exception as e:
+            QMessageBox.about(self, "错误", str(e))
+        else:
+            # 传递
+            self.change_comment(self.current_comment)
+            # 页面3 -> 页面4
+            self.change_to_next_page(self.B4)
 
     ##### page4 #####
     def set_actions_page4(self):
@@ -215,6 +221,9 @@ class mainwindow(QMainWindow):
             self.P4_B_NEXT.setEnabled(True)
 
     def page4_B_FINISH_clicked(self):
+        # 提示效果
+        # self.P4_L_HINT.setText("生成中...")
+
         for i in range(self.comment_num):
             a = self.news_authors[i]
             c = self.news_comments[i]
@@ -239,4 +248,12 @@ class mainwindow(QMainWindow):
             painter.end()
             pixmap.save("cache/comment"+str(i+1)+".png", "png")
         
+        # 生成视频
+        command = 'ffmpeg -y -f concat -safe 0 -i video_config.txt output.mp4'
+        if os.system(command) == 0:
+            QMessageBox.about(self, "错误", "完成")
+            # self.P4_L_HINT.setText("")
+        else:
+            QMessageBox.about(self, "错误", "失败")
+            # self.P4_L_HINT.setText("")
 
