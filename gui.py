@@ -198,7 +198,7 @@ class mainwindow(QMainWindow):
         painter.begin(pixmap)
         # title
         painter.setFont(QFont("Noto Sans Mono CJK", 30))
-        painter.drawText(20, 180, self.news_title)
+        painter.drawText(20, 180, self.P2_LE_TITLE.text())
         # pickup
         painter.setFont(QFont("Noto Sans Mono CJK", 21))
         option = QTextOption(Qt.AlignJustify)
