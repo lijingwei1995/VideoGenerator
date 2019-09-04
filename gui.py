@@ -310,7 +310,7 @@ class mainwindow(QMainWindow):
         
         # 生成视频
         command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.mp4"
-        # 'ffmpeg -y -f concat -safe 0 -i video_config.txt -i bgm/bgm01.mp3 -shortest output.mp4'
+
         if os.system(command) == 0:
             QMessageBox.about(self, "错误", "完成")
             # self.P4_L_HINT.setText("")
