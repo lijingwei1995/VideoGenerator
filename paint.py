@@ -44,9 +44,9 @@ class VGPaint:
     def handle_cover_picture(self):
         # 由原图生成高斯模糊+拉伸的背景
         im = Image.open("cache/cover.png")
-        im_bg = im.resize((623, 350))
+        im_bg = im.resize((623+312, 600))
         im_bg = im_bg.filter(ImageFilter.GaussianBlur(10))
-        im_bg.paste(im, (0, int((350-255)/2)))
+        im_bg.paste(im, (0, int((600-380)/2)))
         im_bg.save("cache/cover_f.png")
 
 # import textwrap

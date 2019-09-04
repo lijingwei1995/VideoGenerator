@@ -43,11 +43,12 @@ class VGSpider:
         # return p.text, p2.a['href']
 
         div = soup.find("div", "news-comment-plugin")
+        t = p.text.replace('\n','')
 
         if div is None:
-            return p.text, div
+            return t, div
         else:
-            return p.text, div['data-full-page-url']
+            return t, div['data-full-page-url']
 
     # comment页
     # 由于是动态页面，需要模拟ajax
@@ -65,7 +66,7 @@ class VGSpider:
         parameter = {
             "keys" : div['data-keys'],
             "full_page_url" : url,
-            "comment_num" : comment_num * 2
+            "comment_num" : comment_num * 4
         }
         url = "https://news.yahoo.co.jp/comment/plugin/v1/full/"
         data = requests.get(url, parameter)
@@ -86,9 +87,9 @@ class VGSpider:
         max_comment_length = 130
         c = []
         a = []
-        for i in range(comment_num * 2):
+        for i in range(comment_num * 4):
             if len(comments[i]) <= max_comment_length:
-                c.append(comments[i])
+                c.append(comments[i].replace('\n',''))
                 a.append(authors[i])
 
         if(len(c) < comment_num):

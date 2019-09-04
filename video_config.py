@@ -12,9 +12,9 @@ def write_picture(n, d):
 # cover
 write_picture("cover_f.png", 5)
 # pickup
-write_picture("pickup.png", 10)
+write_picture("pickup.png", 15)
 # comments
-for i in range(20):
+for i in range(15):
     write_picture("comment" + str(i+1) + ".png", 10)
 
 f.close()

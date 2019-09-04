@@ -2,3 +2,5 @@ font/
 .vscode/
 cache/
 bgm/
+log/
+output/
