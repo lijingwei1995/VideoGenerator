@@ -109,7 +109,7 @@ class mainwindow(QMainWindow):
             self.P2_WEV.load(QUrl(self.pickup_url))
             # 将标题传给页面2的Line Edit
             self.P2_LE_TITLE.setText(self.news_title)
-            self.P2_L_TITLE.setText(self.news_title)
+            # self.P2_L_TITLE.setText(self.news_title)
             # 页面1 -> 页面2
             self.change_to_next_page(self.B2)
 
@@ -118,33 +118,58 @@ class mainwindow(QMainWindow):
         # 生成WebEngineView及Mask
         self.P2_WEV = QWebEngineView(self.page_2)
         self.P2_WEV.setZoomFactor(1.5)
-        self.P2_WEV.setGeometry(QtCore.QRect(0, 30, 640+312, 270+125))
+        self.P2_WEV.setGeometry(QtCore.QRect(0, 30+140, 640+312, 270+125))
         # self.P2_WEV.hide() 
         self.P2_WEV_MASK = QWidget(self.page_2)
-        self.P2_WEV_MASK.setGeometry(QtCore.QRect(0, 30, 640+312, 270+125))
+        self.P2_WEV_MASK.setGeometry(QtCore.QRect(0, 30+140, 640+312, 270+125))
         self.P2_WEV.loadFinished.connect(self.page2_WEV_load_finished)
+
+        # 标题的前景色和背景色
+        def update_color_button(b, c):
+            b.setStyleSheet("background-color:"+c.name()+";")
+        def update_title_color():
+            self.P2_L_TITLE.setStyleSheet(  "font: 52pt \"Noto Sans Mono CJK\";"
+                                "color:"+self.title_font_color.name()+";"
+                                "background-color:"+self.title_back_color.name()+";"
+                                "font-weight:550"
+                                )
+        def update_title_font_color():
+            self.title_font_color = QColorDialog.getColor()
+            update_color_button(self.P2_B_FONTCOLOR, self.title_font_color)
+            update_title_color()
+        def update_title_back_color():
+            self.title_back_color = QColorDialog.getColor()
+            update_color_button(self.P2_B_BACKCOLOR, self.title_back_color)
+            update_title_color()
+
+        # 默认
+        self.title_font_color = QColor(255, 255, 255)
+        self.title_back_color = QColor(0, 0, 0)
+        update_color_button(self.P2_B_FONTCOLOR, self.title_font_color)
+        update_color_button(self.P2_B_BACKCOLOR, self.title_back_color)
+
+        # 改变
+        self.P2_B_FONTCOLOR.clicked.connect(update_title_font_color)
+        self.P2_B_BACKCOLOR.clicked.connect(update_title_back_color)
+
         # 生成标题label
         # self.P2_LE_TITLE = QtWidgets.QLineEdit(self.page_2)
         # self.P2_LE_TITLE.setGeometry(QtCore.QRect(0, 350, 641, 41))
         # self.P2_LE_TITLE.setObjectName("P2_LE_TITLE")
         self.P2_LE_TITLE.textChanged.connect(lambda: self.P2_L_TITLE.setText(self.sender().text()))
-        self.label_5 = QtWidgets.QLabel(self.page_2)
-        self.label_5.setGeometry(QtCore.QRect(0, 65+55, 625+312, 90))
-        self.label_5.setStyleSheet( "font: 45pt \"Noto Sans Mono CJK\";\n"
-                                    "color:white;\n"
-                                    "background-color: rgba(0,0,0,0.5);"
-                                    "font-weight:550"
-                                    )
-        self.label_5.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.label_5.setObjectName("label_5")
-        self.label_5.setText("  日本网友评论：")
+        # self.label_5 = QtWidgets.QLabel(self.page_2)
+        # self.label_5.setGeometry(QtCore.QRect(0, 65+55, 625+312, 90))
+        # self.label_5.setStyleSheet( "font: 45pt \"Noto Sans Mono CJK\";\n"
+        #                             "color:white;\n"
+        #                             "background-color: rgba(0,0,0,0.5);"
+        #                             "font-weight:550"
+        #                             )
+        # self.label_5.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        # self.label_5.setObjectName("label_5")
+        # self.label_5.setText("  日本网友评论：")
         self.P2_L_TITLE = QtWidgets.QLabel(self.page_2)
-        self.P2_L_TITLE.setGeometry(QtCore.QRect(0, 155+55, 625+312, 90))
-        self.P2_L_TITLE.setStyleSheet(  "font: 45pt \"Noto Sans Mono CJK\";\n"
-                                        "color:white;\n"
-                                        "background-color: rgba(0,0,0,0.5);"
-                                        "font-weight:550"
-                                        )
+        self.P2_L_TITLE.setGeometry(QtCore.QRect(0, 30, 940, 140))
+        update_title_color()
         self.P2_L_TITLE.setAlignment(QtCore.Qt.AlignCenter)
         self.P2_L_TITLE.setObjectName("P2_L_TITLE")
         
@@ -162,8 +187,10 @@ class mainwindow(QMainWindow):
 
     def page2_B_PRINT_clicked(self):
         # 截图，保存
-        pixmap = self.page_2.grab(QtCore.QRect(2, 30, 640-15-2+312, 270-15+125))
+        pixmap = self.page_2.grab(QtCore.QRect(0+2, 30, 935, 520)) # 起始坐标加长宽
         pixmap.save("cache/cover.png", "png")
+        pixmap = self.page_2.grab(QtCore.QRect(0+2, 30+140, 935, 330))
+        pixmap.save("cache/cover_bg.png", "png")
         self.paint.handle_cover_picture()
         # 获取新闻摘要和评论地址
         self.pickup, self.comment_page_url = self.spider.scrape_news_pickup(self.pickup_url)
@@ -276,8 +303,9 @@ class mainwindow(QMainWindow):
             option = QTextOption(Qt.AlignJustify)
             option.setWrapMode(QTextOption.WordWrap)
             painter.drawText(QtCore.QRectF(110, 75, 810, 355), c, option)
+            painter.setFont(QFont("Noto Sans Mono CJK", 21))
             painter.setPen(Qt.red)
-            painter.drawText(QtCore.QRectF(110, 310, 810, 550), ct, option)
+            painter.drawText(QtCore.QRectF(110, 310, 800, 550), ct, option)
             
             painter.end()
             pixmap.save("cache/comment"+str(i+1)+".png", "png")

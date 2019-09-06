@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1012</width>
-    <height>625</height>
+    <height>726</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
       <x>30</x>
       <y>0</y>
       <width>20</width>
-      <height>611</height>
+      <height>671</height>
      </rect>
     </property>
     <property name="orientation">
@@ -68,7 +68,7 @@
       <x>50</x>
       <y>10</y>
       <width>953</width>
-      <height>566</height>
+      <height>661</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -175,7 +175,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>490</y>
+        <y>580</y>
         <width>321</width>
         <height>31</height>
        </rect>
@@ -188,7 +188,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>520</y>
+        <y>610</y>
         <width>951</width>
         <height>41</height>
        </rect>
@@ -210,6 +210,58 @@
       </property>
       <property name="text">
        <string>滚动</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_9">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>0</y>
+        <width>16</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>A :</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="P2_B_FONTCOLOR">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>0</y>
+        <width>31</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="P2_B_BACKCOLOR">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>0</y>
+        <width>31</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>0</y>
+        <width>16</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>B :</string>
       </property>
      </widget>
     </widget>
