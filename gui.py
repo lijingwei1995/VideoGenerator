@@ -340,7 +340,7 @@ class mainwindow(QMainWindow):
         command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.mp4"
 
         if os.system(command) == 0:
-            QMessageBox.about(self, "错误", "完成")
+            QMessageBox.about(self, "成功", "完成")
             # self.P4_L_HINT.setText("")
         else:
             QMessageBox.about(self, "错误", "失败")
@@ -361,7 +361,7 @@ class mainwindow(QMainWindow):
     def page4_B_CONVERT_VIDEO_clicked(self):
         command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.mp4"
         if os.system(command) == 0:
-            QMessageBox.about(self, "错误", "完成")
+            QMessageBox.about(self, "成功", "完成")
     
     def page4_B_ADD_BGM_clicked(self):
         item = self.P5_LW_BGMS.currentItem()
@@ -369,7 +369,7 @@ class mainwindow(QMainWindow):
             bgm = item.text()
             command = "ffmpeg -y -i bgm/" + bgm + " -i output/output.mp4 -shortest output/output_final.mp4"
             if os.system(command) == 0:
-                QMessageBox.about(self, "错误", "完成")
+                QMessageBox.about(self, "成功", "完成")
         else:
             QMessageBox.about(self, "错误", "未选择bgm")
 
