@@ -120,18 +120,17 @@ class mainwindow(QMainWindow):
         self.P2_WEV.setZoomFactor(1.5)
         self.P2_WEV.setGeometry(QtCore.QRect(0, 30+140, 640+312, 270+125))
         # self.P2_WEV.hide() 
-        self.P2_WEV_MASK = QWidget(self.page_2)
-        self.P2_WEV_MASK.setGeometry(QtCore.QRect(0, 30+140, 640+312, 270+125))
-        self.P2_WEV.loadFinished.connect(self.page2_WEV_load_finished)
+        # self.P2_WEV_MASK = QWidget(self.page_2)
+        # self.P2_WEV_MASK.setGeometry(QtCore.QRect(0, 30+140, 640+312, 270+125))
+        # self.P2_WEV.loadFinished.connect(self.page2_WEV_load_finished)
 
         # 标题的前景色和背景色
         def update_color_button(b, c):
             b.setStyleSheet("background-color:"+c.name()+";")
         def update_title_color():
-            self.P2_L_TITLE.setStyleSheet(  "font: 52pt \"Noto Sans Mono CJK\";"
+            self.P2_L_TITLE.setStyleSheet(  "font: 52pt \"Noto Sans CJK Bold\";"
                                 "color:"+self.title_font_color.name()+";"
                                 "background-color:"+self.title_back_color.name()+";"
-                                "font-weight:550"
                                 )
         def update_title_font_color():
             self.title_font_color = QColorDialog.getColor()
@@ -224,10 +223,10 @@ class mainwindow(QMainWindow):
         painter = QPainter()
         painter.begin(pixmap)
         # title
-        painter.setFont(QFont("Noto Sans Mono CJK", 30))
+        painter.setFont(QFont("Noto Sans CJK Bold", 30))
         painter.drawText(20, 180, self.P2_LE_TITLE.text())
         # pickup
-        painter.setFont(QFont("Noto Sans Mono CJK", 21))
+        painter.setFont(QFont("Noto Sans CJK Bold", 21))
         option = QTextOption(Qt.AlignJustify)
         option.setWrapMode(QTextOption.WordWrap)
         painter.drawText(QtCore.QRectF(20, 210, 900, 550), self.P3_PTE_PICKUP.toPlainText(), option)
@@ -296,14 +295,14 @@ class mainwindow(QMainWindow):
             painter = QPainter()
             painter.begin(pixmap)
             # author
-            painter.setFont(QFont("Noto Sans Mono CJK", 15))
+            painter.setFont(QFont("Noto Sans CJK Bold", 15))
             painter.drawText(110, 55, a)
             # comments & translate
-            painter.setFont(QFont("Noto Sans Mono CJK", 18))
+            painter.setFont(QFont("Noto Sans CJK Bold", 18))
             option = QTextOption(Qt.AlignJustify)
             option.setWrapMode(QTextOption.WordWrap)
             painter.drawText(QtCore.QRectF(110, 75, 810, 355), c, option)
-            painter.setFont(QFont("Noto Sans Mono CJK", 21))
+            painter.setFont(QFont("Noto Sans CJK Bold", 21))
             painter.setPen(Qt.red)
             painter.drawText(QtCore.QRectF(110, 310, 800, 550), ct, option)
             
@@ -337,7 +336,7 @@ class mainwindow(QMainWindow):
 
         
         # 生成视频
-        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.mp4"
+        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.wmv"
 
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
@@ -359,7 +358,7 @@ class mainwindow(QMainWindow):
         self.P5_B_ADD_BGM.clicked.connect(self.page4_B_ADD_BGM_clicked)
 
     def page4_B_CONVERT_VIDEO_clicked(self):
-        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.mp4"
+        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.2M output/output.wmv"
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
     
@@ -367,7 +366,7 @@ class mainwindow(QMainWindow):
         item = self.P5_LW_BGMS.currentItem()
         if item is not None:
             bgm = item.text()
-            command = "ffmpeg -y -i bgm/" + bgm + " -i output/output.mp4 -shortest output/output_final.mp4"
+            command = "ffmpeg -y -i bgm/" + bgm + " -i output/output.wmv -shortest -b 1.2M output/output_final.wmv"
             if os.system(command) == 0:
                 QMessageBox.about(self, "成功", "完成")
         else:

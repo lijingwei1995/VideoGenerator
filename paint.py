@@ -48,6 +48,8 @@ class VGPaint:
         im_bg = im_bg.filter(ImageFilter.GaussianBlur(10))
         im_bg.paste(Image.open("cache/cover.png"), (0, 40))
         im_bg.save("cache/cover_f.png")
+        im_bg = im_bg.resize((960, 600))
+        im_bg.save("cache/cover_bili.png")
 
 # import textwrap
 # lines = textwrap.wrap(text, width=40)
