@@ -326,6 +326,19 @@
        </font>
       </property>
      </widget>
+     <widget class="QPushButton" name="P3_B_OPEN_URL">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>0</y>
+        <width>80</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>原网页</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_4">
      <widget class="QLabel" name="label_6">
@@ -354,25 +367,6 @@
        <font>
         <pointsize>12</pointsize>
        </font>
-      </property>
-     </widget>
-     <widget class="QTextBrowser" name="P4_TB_COMMENT">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>951</width>
-        <height>251</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(249, 249, 249);
-</string>
       </property>
      </widget>
      <widget class="QPushButton" name="P4_B_FINISH">
@@ -457,6 +451,21 @@
       </property>
       <property name="text">
        <string>单页生成</string>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="P4_PTE_COMMENT_S">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>951</width>
+        <height>251</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
       </property>
      </widget>
     </widget>

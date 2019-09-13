@@ -45,10 +45,14 @@ class VGSpider:
         div = soup.find("div", "news-comment-plugin")
         t = p.text.replace('\n','')
 
+        # 完整新闻
+        p_d = soup.find("p", "tpcNews_detailLink")
+        d_url = p_d.find("a")['href']
+
         if div is None:
-            return t, div
+            return t, div, d_url
         else:
-            return t, div['data-full-page-url']
+            return t, div['data-full-page-url'], d_url
 
     # comment页
     # 由于是动态页面，需要模拟ajax

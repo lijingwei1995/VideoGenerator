@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*- 
+
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -10,6 +12,7 @@ from translator import VGTranslator
 
 import os
 import time
+import webbrowser
 
 class mainwindow(QMainWindow):
     def __init__(self):
@@ -21,13 +24,9 @@ class mainwindow(QMainWindow):
 
         # 记录log
         # 新建文件夹
+        # 生成文件夹名
         self.log_folder = time.strftime('%m-%d-%H-%M-%S',time.localtime(time.time()))
         self.log_folder_path = "log/" + self.log_folder + "/"
-        os.mkdir(self.log_folder_path)
-        # 打开txt
-        self.f_log = open(self.log_folder_path + "log.txt", "w")
-        self.f_log.write("start:\n")
-        self.f_log.close()
 
         uic.loadUi("VG_UI/mainwindow.ui", self)
         self.set_actions()
@@ -37,7 +36,9 @@ class mainwindow(QMainWindow):
         # self.f_log.close()
 
     def write_log(self, str):
-        self.f_log = open(self.log_folder_path + "log.txt", "a")
+        if not os.path.exists(self.log_folder_path):
+            os.mkdir(self.log_folder_path)
+        self.f_log = open(self.log_folder_path + "log.txt", "a", encoding='utf-8')
         self.f_log.write(str)
         self.f_log.close()
 
@@ -192,7 +193,7 @@ class mainwindow(QMainWindow):
         pixmap.save("cache/cover_bg.png", "png")
         self.paint.handle_cover_picture()
         # 获取新闻摘要和评论地址
-        self.pickup, self.comment_page_url = self.spider.scrape_news_pickup(self.pickup_url)
+        self.pickup, self.comment_page_url, self.detail_url = self.spider.scrape_news_pickup(self.pickup_url)
 
         self.pickup_t = self.translator.translate(self.pickup)
 
@@ -205,7 +206,7 @@ class mainwindow(QMainWindow):
 
         # 记录log
         # 写入标题
-        self.write_log("\ntitle:"+self.P2_LE_TITLE.text()+"\n")
+        self.write_log(self.detail_url+"\n\ntitle:日本网友评论："+self.P2_LE_TITLE.text()+"\n")
 
 
         # 页面2 -> 页面3
@@ -215,6 +216,8 @@ class mainwindow(QMainWindow):
     def set_actions_page3(self):
         # 确定键
         self.P3_B_CONFIRM.clicked.connect(self.page3_B_CONFIRM_clicked)
+        # 打开原网页
+        self.P3_B_OPEN_URL.clicked.connect(lambda: webbrowser.open(self.detail_url))
 
     def page3_B_CONFIRM_clicked(self):
         # 画新闻摘要
@@ -260,15 +263,18 @@ class mainwindow(QMainWindow):
         self.P4_B_FINISH.clicked.connect(self.page4_B_FINISH_clicked)
         # 生成单页按钮
         self.P4_B_CONVERT_ONE.clicked.connect(self.page4_B_CONVERT_ONE_clicked)
+
     
     def change_comment(self, index):
         # 保存翻译编辑框值
         if self.P4_PTE_COMMENT.toPlainText() != "":
+            self.news_comments[self.current_comment] = self.P4_PTE_COMMENT_S.toPlainText()
             self.news_comments_t[self.current_comment] = self.P4_PTE_COMMENT.toPlainText()
         # 值传递
         self.current_comment = index
         # 编辑框赋值
-        self.P4_TB_COMMENT.setText(self.news_comments[self.current_comment])
+        # self.P4_TB_COMMENT.setText(self.news_comments[self.current_comment])
+        self.P4_PTE_COMMENT_S.setPlainText(self.news_comments[self.current_comment])
         self.P4_PTE_COMMENT.setPlainText(self.news_comments_t[self.current_comment])
         # 数字显示
         self.P4_L_NUMBER.setText(str(self.current_comment+1) + "/" + str(self.comment_num))
@@ -316,7 +322,10 @@ class mainwindow(QMainWindow):
     def page4_B_CONVERT_ONE_clicked(self):
         # 保存翻译编辑框值
         if self.P4_PTE_COMMENT.toPlainText() != "":
+            self.news_comments[self.current_comment] = self.P4_PTE_COMMENT_S.toPlainText()
             self.news_comments_t[self.current_comment] = self.P4_PTE_COMMENT.toPlainText()
+            # 写入评论
+            self.write_log(str(self.current_comment+1)+"\t:"+self.news_comments_t[self.current_comment]+"\n\n")
             
         self.page4_paint_conmment_picture(self.current_comment)
 
@@ -326,6 +335,7 @@ class mainwindow(QMainWindow):
         
         # 保存翻译编辑框值
         if self.P4_PTE_COMMENT.toPlainText() != "":
+            self.news_comments[self.current_comment] = self.P4_PTE_COMMENT_S.toPlainText()
             self.news_comments_t[self.current_comment] = self.P4_PTE_COMMENT.toPlainText()
 
         # 记录log
@@ -344,6 +354,11 @@ class mainwindow(QMainWindow):
         else:
             QMessageBox.about(self, "错误", "失败")
             # self.P4_L_HINT.setText("")
+
+        # 打开log
+        command ="start log\\" + self.log_folder + "\\log.txt"
+        print(command)
+        os.system(command)
 
         # 页面4 -> 页面5
         self.change_to_next_page(self.B5)
