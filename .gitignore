@@ -1,6 +1,7 @@
 font/
 .vscode/
 cache/
+cache2/
 bgm/
 log/
 output/
