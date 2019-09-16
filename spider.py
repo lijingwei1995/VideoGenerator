@@ -124,13 +124,34 @@ class VGSpider:
         # img_url = t.find("img")['src']
 
         full_img_page_url = t.find("a")['href']
+        # 下载图片函数
+        def download_picture(url, i):
+            img_data = requests.get(url)
+            img_soup = bs4.BeautifulSoup(img_data.text, 'lxml')
+            li = img_soup.find("li", "mainImgCont")
+            img_url = li.find("img")['src']
+            # 下载图片
+            with open('cache2/img'+str(i)+'.png', 'wb') as f:
+                f.write(requests.get(img_url).content)
+
+        download_picture(full_img_page_url, 0)
+
+        # 下载更多图片
         img_data = requests.get(full_img_page_url)
-        img_soup = bs4.BeautifulSoup(img_data.text,'lxml')
-        li = img_soup.find("li", "mainImgCont")
-        img_url = li.find("img")['src']
-        # 下载图片
-        with open('cache2/img.png','wb') as f:
-            f.write(requests.get(img_url).content)
+        img_soup = bs4.BeautifulSoup(img_data.text, 'lxml')
+        div = img_soup.find("div", "imgThumbnail")
+        li_list = div.find_all("li", "imgThumbnailBox")
+
+        max_img_num = 5
+        i = 0
+        for li in li_list[1:]:
+            if(i >= max_img_num):
+                break
+            else:
+                img_url = li.find("a")['href']
+                download_picture(img_url, i+1)
+                i = i + 1
+        print("pic_num" + str(i))
 
         return h1.text, p_list
 
@@ -139,7 +160,8 @@ class VGSpider:
 if __name__ == "__main__":
     v = VGSpider()
 
-    url = "https://headlines.yahoo.co.jp/hl?a=20190915-00000056-jij-pol"
+    # url = "https://headlines.yahoo.co.jp/hl?a=20190915-00000056-jij-pol"
+    url = "https://headlines.yahoo.co.jp/article?a=20190915-00067190-gendaibiz-bus_all"
     v.scrape_news_details(url)
 #     c, a = v.scrape_news_comments(url, 20)
 #     print(a)

@@ -72,8 +72,7 @@ class VGPaint:
         im2 = im.resize(tuple(resize))
         im_bg.paste(im2, tuple(pos))
 
-
-        im_bg.save("cache2/bg.png")
+        im_bg.save("cache2/cover_bottom.png")
 
 # import textwrap
 # lines = textwrap.wrap(text, width=40)
