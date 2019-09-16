@@ -46,7 +46,7 @@ class mainwindow(QMainWindow):
         # 主界面
         # 定义导航按钮组
         self.nav_buttons = [
-            self.B1, self.B2, self.B3, self.B4, self.B5
+            self.B1, self.B2, self.B3, self.B4, self.B5, self.B6, self.B7
         ]
         self.current_button = self.B1
         self.current_button.setEnabled(False)
@@ -60,6 +60,8 @@ class mainwindow(QMainWindow):
         self.set_actions_page3()
         self.set_actions_page4()
         self.set_actions_page5()
+        self.set_actions_page6()
+        self.set_actions_page7()
 
     # def change_page(self):
     #     # QMessageBox.about(self, "click", "yes")
@@ -387,4 +389,19 @@ class mainwindow(QMainWindow):
         else:
             QMessageBox.about(self, "错误", "未选择bgm")
 
+    ##### page6 #####
+    def set_actions_page6(self):
+        def CHOOSE_clicked():
+            try:
+                self.news_title, self.news_p_list = self.spider.scrape_news_details(self.P6_LE_NEWS_URL.text())
+            except Exception as e:
+                QMessageBox.about(self, "错误", str(e))
+            else:
+                self.P6_LE_TITLE.setText(self.news_title)
+        self.P6_B_CHOOSE.clicked.connect(CHOOSE_clicked)
+        
+
+    ##### page7 #####
+    def set_actions_page7(self):
+        pass
 

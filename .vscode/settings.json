@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "H:\\Software\\Anaconda3\\python.exe",
+    "python.pythonPath": "C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe",
     "python.linting.pylintArgs": [
         "--extension-pkg-whitelist=PyQt5"
     ]

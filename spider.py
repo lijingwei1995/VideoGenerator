@@ -101,10 +101,45 @@ class VGSpider:
 
         return c[0:comment_num], a[0:comment_num]
     
+    def scrape_news_details(self, url):
+        data = requests.get(url)
+        soup = bs4.BeautifulSoup(data.text,'lxml')
+
+        # title
+        div = soup.find("div", "hd")
+        h1 = div.find("h1")
+        # print(h1.text)
+
+        # paragraph
+        p = soup.find("div", "paragraph")
+        p_list = p.text.replace("\u3000", "").split("\n\n")
+        while '' in p_list:
+            p_list.remove('')
+        # print(p_list)
+
+        # img
+        t = soup.find("div", "thumb")
+        if(t is None):
+            raise Exception("新闻不含图片")
+        # img_url = t.find("img")['src']
+
+        full_img_page_url = t.find("a")['href']
+        img_data = requests.get(full_img_page_url)
+        img_soup = bs4.BeautifulSoup(img_data.text,'lxml')
+        li = img_soup.find("li", "mainImgCont")
+        img_url = li.find("img")['src']
+        # 下载图片
+        with open('cache2/img.png','wb') as f:
+            f.write(requests.get(img_url).content)
+
+        return h1.text, p_list
+
 
 # 测试代码
-# if __name__ == "__main__":
-#     v = VGSpider()
-#     url = "https://headlines.yahoo.co.jp/cm/main?d=20190830-00000119-jij-int"
+if __name__ == "__main__":
+    v = VGSpider()
+
+    url = "https://headlines.yahoo.co.jp/hl?a=20190915-00000056-jij-pol"
+    v.scrape_news_details(url)
 #     c, a = v.scrape_news_comments(url, 20)
 #     print(a)

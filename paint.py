@@ -51,6 +51,30 @@ class VGPaint:
         im_bg = im_bg.resize((960, 600))
         im_bg.save("output/cover_bili.png")
 
+    def paint_black_bg(self, folder, img_name, bg_size):
+        im_bg = Image.new("RGB", bg_size, "black")
+        im = Image.open(folder + "/" + img_name + ".png")
+
+        d = 2
+        max_rate = 0
+        for i in range(d):
+            rate = im.size[i] / bg_size[i]
+            if rate > max_rate:
+                max_rate = rate
+        
+        resize = []
+        pos = []
+        for i in range(d):
+            resize_l = im.size[i] / max_rate
+            resize.append(int(resize_l))
+            pos.append(int((bg_size[i] - resize_l) / 2))
+        
+        im2 = im.resize(tuple(resize))
+        im_bg.paste(im2, tuple(pos))
+
+
+        im_bg.save("cache2/bg.png")
+
 # import textwrap
 # lines = textwrap.wrap(text, width=40)
 # y_text = h
@@ -58,3 +82,8 @@ class VGPaint:
 #     width, height = font.getsize(line)
 #     draw.text(((w - width) / 2, y_text), line, font=font, fill=FOREGROUND)
 #     y_text += height
+
+# 测试代码
+if __name__ == "__main__":
+    p = VGPaint()
+    p.paint_black_bg("cache2", "img", (935, 600))
