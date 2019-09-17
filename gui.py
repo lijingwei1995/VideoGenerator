@@ -247,7 +247,7 @@ class mainwindow(QMainWindow):
         self.current_comment = 0
         try:
             self.news_comments, self.news_authors = self.spider.scrape_news_comments(self.comment_page_url, self.comment_num)
-            self.news_comments_t = self.translator.translate_list(self.news_comments[:]) # translate
+            self.news_comments_t = self.translator.translate_list(self.news_comments) # translate
         except Exception as e:
             QMessageBox.about(self, "错误", str(e))
         else:
@@ -292,7 +292,7 @@ class mainwindow(QMainWindow):
         else:
             self.P4_B_NEXT.setEnabled(True)
 
-    def page4_paint_conmment_picture(self, i):
+    def page4_paint_comment_picture(self, i):
             a = self.news_authors[i]
             c = self.news_comments[i]
             ct = self.news_comments_t[i]
@@ -329,7 +329,7 @@ class mainwindow(QMainWindow):
             # 写入评论
             self.write_log(str(self.current_comment+1)+"\t:"+self.news_comments_t[self.current_comment]+"\n\n")
             
-        self.page4_paint_conmment_picture(self.current_comment)
+        self.page4_paint_comment_picture(self.current_comment)
 
     def page4_B_FINISH_clicked(self):
         # 提示效果
@@ -344,7 +344,7 @@ class mainwindow(QMainWindow):
         self.write_log("\ncomments:\n")
 
         for i in range(self.comment_num):
-            self.page4_paint_conmment_picture(i)
+            self.page4_paint_comment_picture(i)
 
         
         # 生成视频
@@ -371,15 +371,15 @@ class mainwindow(QMainWindow):
         for bgm in bgms:
             self.P5_LW_BGMS.addItem(bgm)
 
-        self.P5_B_CONVERT_VIDEO.clicked.connect(self.page4_B_CONVERT_VIDEO_clicked)
-        self.P5_B_ADD_BGM.clicked.connect(self.page4_B_ADD_BGM_clicked)
+        self.P5_B_CONVERT_VIDEO.clicked.connect(self.page5_B_CONVERT_VIDEO_clicked)
+        self.P5_B_ADD_BGM.clicked.connect(self.page5_B_ADD_BGM_clicked)
 
-    def page4_B_CONVERT_VIDEO_clicked(self):
+    def page5_B_CONVERT_VIDEO_clicked(self):
         command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.2M output/output.wmv"
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
     
-    def page4_B_ADD_BGM_clicked(self):
+    def page5_B_ADD_BGM_clicked(self):
         item = self.P5_LW_BGMS.currentItem()
         if item is not None:
             bgm = item.text()
@@ -393,15 +393,165 @@ class mainwindow(QMainWindow):
     def set_actions_page6(self):
         def CHOOSE_clicked():
             try:
-                self.news_title, self.news_p_list = self.spider.scrape_news_details(self.P6_LE_NEWS_URL.text())
+                self.news_title, t, self.news_pic_num = self.spider.scrape_news_details(self.P6_LE_NEWS_URL.text())
             except Exception as e:
                 QMessageBox.about(self, "错误", str(e))
             else:
                 self.P6_LE_TITLE.setText(self.news_title)
+
+                # for p in t:
+                #     print(p+str(len(p)))
+                # 调整段落
+                self.news_p_list = []
+                limit = 200 # 最多接受 1.5 limit
+                for p in t:
+                    p = p.replace('\n','') # 第一段总会有一行空
+                    if(len(p) < limit):
+                        self.news_p_list.append(p)
+                    else:
+                        s = p.split("。")
+                        p_new = ""
+                        l_new = len(p) - len(p_new)
+                        index = 0
+                        while(l_new > 1.5 * limit):
+                            for i in range(index, len(s)):
+                                p_new = p_new + s[i] + "。"
+                                if(len(p_new) > limit):
+                                    self.news_p_list.append(p_new)
+                                    l_new = l_new - len(p_new)
+                                    p_new = ""
+                                    index = i + 1
+                                    break
+                        self.news_p_list.append("。".join(s[index:]))
+                # for p in self.news_p_list:
+                #     print(p+str(len(p)))
+                
+        def CONFIRM_clicked():
+            try:
+                self.news_p_list_t = self.translator.translate_list(self.news_p_list) # translate
+            except Exception as e:
+                QMessageBox.about(self, "错误", str(e))
+            else:
+                # 创建duration和check数组
+                self.news_p_list_num = len(self.news_p_list)
+                self.news_duration_list = []
+                for i in range(self.news_p_list_num):
+                    l = len(self.news_p_list)
+                    if l < 50:
+                        self.news_duration_list.append("5")
+                    elif l < 200:
+                        self.news_duration_list.append("10")
+                    else:
+                        self.news_duration_list.append("13")
+                self.news_check_list = [True for i in range(self.news_p_list_num)]
+
+                # 传递数据
+                self.current_p = 0
+                self.page7_change_p(self.current_p)
+                # 页面6 -> 页面7
+                self.change_to_next_page(self.B7)
+
         self.P6_B_CHOOSE.clicked.connect(CHOOSE_clicked)
+        self.P6_B_CONFIRM.clicked.connect(CONFIRM_clicked)
         
 
     ##### page7 #####
     def set_actions_page7(self):
-        pass
+        # 前后按钮
+        self.P7_B_NEXT.clicked.connect(lambda: self.page7_change_p(self.current_p + 1))
+        self.P7_B_PREVIOUS.clicked.connect(lambda: self.page7_change_p(self.current_p - 1))
+        # 完成按钮
+        # self.P7_B_FINISH.clicked.connect(self.page7_B_FINISH_clicked)
+        # 生成单页按钮
+        # self.P7_B_CONVERT_ONE.clicked.connect(self.page7_B_CONVERT_ONE_clicked)
 
+    
+    def page7_change_p(self, index):
+        # 保存翻译编辑框值
+        if self.P7_PTE_P.toPlainText() != "":
+            self.news_p_list[self.current_p] = self.P7_PTE_P_S.toPlainText()
+            self.news_p_list_t[self.current_p] = self.P7_PTE_P.toPlainText()
+            self.news_duration_list[self.current_p] = self.P7_LE_DURATION.text()
+            self.news_check_list[self.current_p] = self.P7_CB_CHECK.isChecked()
+        # 值传递
+        self.current_p = index
+        # 编辑框赋值
+        self.P7_PTE_P_S.setPlainText(self.news_p_list[self.current_p])
+        self.P7_PTE_P.setPlainText(self.news_p_list_t[self.current_p])
+        self.P7_LE_DURATION.setText(self.news_duration_list[self.current_p])
+        self.P7_CB_CHECK.setChecked(self.news_check_list[self.current_p])
+        # 数字显示
+        self.P7_L_NUMBER.setText(str(self.current_p+1) + "/" + str(self.news_p_list_num))
+        # 按钮可点性
+        # PREVIOUS
+        if self.current_p == 0:
+            self.P7_B_PREVIOUS.setEnabled(False)
+        else:
+            self.P7_B_PREVIOUS.setEnabled(True)
+        # NEXT
+        if self.current_p == self.news_p_list_num - 1:
+            self.P7_B_NEXT.setEnabled(False)
+        else:
+            self.P7_B_NEXT.setEnabled(True)
+
+    def page7_B_FINISH_clicked(self):        
+        # 保存翻译编辑框值
+        if self.P7_PTE_P.toPlainText() != "":
+            self.news_p_list[self.current_p] = self.P7_PTE_P_S.toPlainText()
+            self.news_p_list_t[self.current_p] = self.P7_PTE_P.toPlainText()
+            self.news_duration_list[self.current_p] = self.P7_LE_DURATION.text()
+            self.news_check_list[self.current_p] = self.P7_CB_CHECK.isChecked()
+
+        # 清除config
+        self.f_log = open("video_config2.txt", "w", encoding='utf-8')
+        self.f_log.write("")
+        self.f_log.close()
+
+        # 封面
+
+
+        # 记录log
+        self.write_log("\np:\n")
+
+        for i in range(self.news_p_list_num):
+            self.page7_paint_p_picture(i)
+
+        
+        # 生成视频
+        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.wmv"
+
+        if os.system(command) == 0:
+            QMessageBox.about(self, "成功", "完成")
+
+    def write_config(self, str):
+        self.f_log = open("video_config2.txt", "a", encoding='utf-8')
+        self.f_log.write(str + "\n")
+        self.f_log.close()
+
+    def page7_paint_p_picture(self, i):
+        c = self.news_comments[i]
+        ct = self.news_comments_t[i]
+
+        # 生成评论图片
+        pixmap = QPixmap()
+        pixmap.load("template/comment_template2.png")
+        painter = QPainter()
+        painter.begin(pixmap)
+        # author
+        painter.setFont(QFont("Noto Sans CJK Bold", 15))
+        painter.drawText(110, 55, a)
+        # comments & translate
+        painter.setFont(QFont("Noto Sans CJK Bold", 18))
+        option = QTextOption(Qt.AlignJustify)
+        option.setWrapMode(QTextOption.WordWrap)
+        painter.drawText(QtCore.QRectF(110, 75, 810, 355), c, option)
+        painter.setFont(QFont("Noto Sans CJK Bold", 21))
+        painter.setPen(Qt.red)
+        painter.drawText(QtCore.QRectF(110, 310, 800, 550), ct, option)
+        
+        painter.end()
+        pixmap.save("cache/comment"+str(i+1)+".png", "png")
+
+        # 记录log
+        # 写入评论
+        self.write_log(str(i+1)+"\t:"+ct+"\n\n")

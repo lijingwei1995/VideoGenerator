@@ -51,29 +51,81 @@ class VGPaint:
         im_bg = im_bg.resize((960, 600))
         im_bg.save("output/cover_bili.png")
 
-    def paint_black_bg(self, folder, img_name, bg_size):
-        im_bg = Image.new("RGB", bg_size, "black")
-        im = Image.open(folder + "/" + img_name + ".png")
-
+    def calculate_img_in_box(self, img_size, box_size):
         d = 2
         max_rate = 0
         for i in range(d):
-            rate = im.size[i] / bg_size[i]
+            rate = img_size[i] / box_size[i]
             if rate > max_rate:
                 max_rate = rate
         
         resize = []
         pos = []
         for i in range(d):
-            resize_l = im.size[i] / max_rate
+            resize_l = img_size[i] / max_rate
             resize.append(int(resize_l))
-            pos.append(int((bg_size[i] - resize_l) / 2))
+            pos.append(int((box_size[i] - resize_l) / 2))
+
+        return tuple(resize), tuple(pos)
+
+    def paint_black_bg(self, folder, img_name, bg_size):
+        im_bg = Image.new("RGB", bg_size, "black")
+        im = Image.open(folder + "/" + img_name + ".png")
+
+        size, pos = self.calculate_img_in_box(im.size, bg_size)
         
-        im2 = im.resize(tuple(resize))
-        im_bg.paste(im2, tuple(pos))
+        im2 = im.resize()
+        im_bg.paste(im2, )
 
-        im_bg.save("cache2/cover_bottom.png")
+        im_bg.save(folder + "/" + img_name + "_black_bg.png")
+        
+        return im_bg
 
+    # 居中打印，默认黑底白字
+    def paint_center_textbox(self, box_size, font_size, text):
+        font = ImageFont.truetype("font/NotoSansCJK-Bold.otf", font_size)
+        text_width = font.getsize(text)
+        im_bg = Image.new("RGB", box_size, "black")
+        draw = ImageDraw.Draw(im_bg)
+        # 计算字体位置
+        text_coordinate = int((box_size[0]-text_width[0])/2), int((box_size[1]-text_width[1])/2)
+        # 写字
+        draw.text(text_coordinate, text, "white", font=font)
+        # im_bg.save("cache2/cover_title.png")
+        return im_bg
+
+    def handle_cover_picture2(self, text):
+        # 由原图生成高斯模糊+拉伸的背景
+        im = Image.open("cache2/img0.png")
+        im_bg = im.resize((935, 600))
+        im_bg = im_bg.filter(ImageFilter.GaussianBlur(10))
+        im_bg.paste(Image.new("RGB", (935, 520), "black"), (0, 40))
+
+        if im.size[0] / im.size[1] < 1.5:
+            # thumb
+            size, pos = self.calculate_img_in_box(im.size, (520, 540))
+            im_bg.paste(im.resize(size), (pos[0], pos[1]+30))
+            # title 分组
+            g = 6
+            n_g = int(len(text) / g)
+            t_multi = [text[i*g:(i+1)*g] for i in range(n_g)]
+            if len(text) > n_g * g:
+                t_multi.append(text[n_g * g:])
+            # paint
+            single_l = 935 - 520 + pos[0]
+            single_h = 120
+            y_pos = int((520 - len(t_multi) * single_h) / 2) + 40
+            for t in t_multi:
+                im_bg.paste(self.paint_center_textbox((single_l, single_h), 64, t), (935 - single_l, y_pos))
+                y_pos = y_pos + single_h
+        else:
+            size, pos = self.calculate_img_in_box(im.size, (935, 380))
+            im_bg.paste(im.resize(size), (pos[0], 600-40-size[1]))
+            im_bg.paste(self.paint_center_textbox((935, 600-80-size[1]), 64, text), (0, 40))
+        
+        im_bg.save("cache2/cover_f.png")
+        im_bg = im_bg.resize((960, 600))
+        im_bg.save("output/cover2_bili.png") 
 # import textwrap
 # lines = textwrap.wrap(text, width=40)
 # y_text = h
@@ -85,4 +137,13 @@ class VGPaint:
 # 测试代码
 if __name__ == "__main__":
     p = VGPaint()
-    p.paint_black_bg("cache2", "img", (935, 600))
+    # p.paint_black_bg("cache2", "img", (935, 600))
+    # p.paint_center_textbox((935, 140), 64, "日本网友评论")
+    p.handle_cover_picture2("韓国メディアが報じた。検察が同日未明に逮捕状を請")
+    # t = "1234567890abcde"
+    # g = 6
+    # n_g = int(len(t) / g)
+    # t2 = [t[i*g:(i+1)*g] for i in range(n_g)]
+    # if len(t) > n_g * g:
+    #     t2.append(t[n_g * g:])
+    # print(t2)

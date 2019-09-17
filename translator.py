@@ -45,7 +45,7 @@ class VGTranslator:
         R = []
 
         # 根据q_list动态调整n
-        max_length = 1000
+        max_length = 900
         def sum(l):
             s = 0
             for i in l:

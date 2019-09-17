@@ -111,7 +111,10 @@ class VGSpider:
         # print(h1.text)
 
         # paragraph
-        p = soup.find("div", "paragraph")
+        p = soup.find("p", "ynDetailText")
+        if p.a is not None:
+            p.a.replace_with("\n\n")
+
         p_list = p.text.replace("\u3000", "").split("\n\n")
         while '' in p_list:
             p_list.remove('')
@@ -140,6 +143,8 @@ class VGSpider:
         img_data = requests.get(full_img_page_url)
         img_soup = bs4.BeautifulSoup(img_data.text, 'lxml')
         div = img_soup.find("div", "imgThumbnail")
+        if div is None:
+            return h1.text, p_list, 0
         li_list = div.find_all("li", "imgThumbnailBox")
 
         max_img_num = 5
@@ -153,7 +158,7 @@ class VGSpider:
                 i = i + 1
         print("pic_num" + str(i))
 
-        return h1.text, p_list
+        return h1.text, p_list, i
 
 
 # 测试代码
