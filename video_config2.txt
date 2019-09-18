@@ -1,0 +1,16 @@
+file 'cache2/cover_f.png'
+duration 5
+file 'cache2/img (1)_b.png'
+duration 5
+file 'cache2/img (2)_b.png'
+duration 5
+file 'cache2/p1.png'
+duration 5
+file 'cache2/p2.png'
+duration 10
+file 'cache2/p3.png'
+duration 10
+file 'cache2/p4.png'
+duration 10
+file 'cache2/p5.png'
+duration 5

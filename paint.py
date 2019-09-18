@@ -70,14 +70,14 @@ class VGPaint:
 
     def paint_black_bg(self, folder, img_name, bg_size):
         im_bg = Image.new("RGB", bg_size, "black")
-        im = Image.open(folder + "/" + img_name + ".png")
+        im = Image.open(folder + "/" + img_name + ".jpg")
 
         size, pos = self.calculate_img_in_box(im.size, bg_size)
         
-        im2 = im.resize()
-        im_bg.paste(im2, )
+        im2 = im.resize(size)
+        im_bg.paste(im2, pos)
 
-        im_bg.save(folder + "/" + img_name + "_black_bg.png")
+        im_bg.save(folder + "/" + img_name + "_b.png")
         
         return im_bg
 
@@ -96,7 +96,7 @@ class VGPaint:
 
     def handle_cover_picture2(self, text):
         # 由原图生成高斯模糊+拉伸的背景
-        im = Image.open("cache2/img0.png")
+        im = Image.open("cache2/img (0).png")
         im_bg = im.resize((935, 600))
         im_bg = im_bg.filter(ImageFilter.GaussianBlur(10))
         im_bg.paste(Image.new("RGB", (935, 520), "black"), (0, 40))
@@ -125,7 +125,7 @@ class VGPaint:
         
         im_bg.save("cache2/cover_f.png")
         im_bg = im_bg.resize((960, 600))
-        im_bg.save("output/cover2_bili.png") 
+        im_bg.save("output/cover_bili.png") 
 # import textwrap
 # lines = textwrap.wrap(text, width=40)
 # y_text = h

@@ -134,7 +134,7 @@ class VGSpider:
             li = img_soup.find("li", "mainImgCont")
             img_url = li.find("img")['src']
             # 下载图片
-            with open('cache2/img'+str(i)+'.png', 'wb') as f:
+            with open('cache2/img ('+str(i)+').png', 'wb') as f:
                 f.write(requests.get(img_url).content)
 
         download_picture(full_img_page_url, 0)

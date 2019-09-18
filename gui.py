@@ -348,7 +348,7 @@ class mainwindow(QMainWindow):
 
         
         # 生成视频
-        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.wmv"
+        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.5M output/output.wmv"
 
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
@@ -374,8 +374,12 @@ class mainwindow(QMainWindow):
         self.P5_B_CONVERT_VIDEO.clicked.connect(self.page5_B_CONVERT_VIDEO_clicked)
         self.P5_B_ADD_BGM.clicked.connect(self.page5_B_ADD_BGM_clicked)
 
+        # 第二个生成
+        command2 = "ffmpeg -y -f concat -safe 0 -i video_config2.txt -b 1.5M output/output.wmv"
+        self.P5_B_CONVERT_VIDEO2.clicked.connect(lambda:os.system(command2))
+
     def page5_B_CONVERT_VIDEO_clicked(self):
-        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.2M output/output.wmv"
+        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.5M output/output.wmv"
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
     
@@ -383,7 +387,7 @@ class mainwindow(QMainWindow):
         item = self.P5_LW_BGMS.currentItem()
         if item is not None:
             bgm = item.text()
-            command = "ffmpeg -y -i bgm/" + bgm + " -i output/output.wmv -shortest -b 1.2M output/output_final.wmv"
+            command = "ffmpeg -y -i bgm/" + bgm + " -i output/output.wmv -shortest -b 1.5M output/output_final.wmv"
             if os.system(command) == 0:
                 QMessageBox.about(self, "成功", "完成")
         else:
@@ -394,11 +398,12 @@ class mainwindow(QMainWindow):
         def CHOOSE_clicked():
             try:
                 self.news_title, t, self.news_pic_num = self.spider.scrape_news_details(self.P6_LE_NEWS_URL.text())
+                self.news_title_t = self.translator.translate(self.news_title)
             except Exception as e:
                 QMessageBox.about(self, "错误", str(e))
             else:
-                self.P6_LE_TITLE.setText(self.news_title)
-
+                self.P6_LE_TITLE.setText(self.news_title_t)
+                self.P6_LE_PIC_NUM.setText(str(self.news_pic_num))
                 # for p in t:
                 #     print(p+str(len(p)))
                 # 调整段落
@@ -434,10 +439,11 @@ class mainwindow(QMainWindow):
             else:
                 # 创建duration和check数组
                 self.news_p_list_num = len(self.news_p_list)
+                self.news_pic_num = int(self.P6_LE_PIC_NUM.text())
                 self.news_duration_list = []
                 for i in range(self.news_p_list_num):
-                    l = len(self.news_p_list)
-                    if l < 50:
+                    l = len(self.news_p_list[i])
+                    if l < 100:
                         self.news_duration_list.append("5")
                     elif l < 200:
                         self.news_duration_list.append("10")
@@ -447,6 +453,7 @@ class mainwindow(QMainWindow):
 
                 # 传递数据
                 self.current_p = 0
+                self.news_title_t = self.P6_LE_TITLE.text()
                 self.page7_change_p(self.current_p)
                 # 页面6 -> 页面7
                 self.change_to_next_page(self.B7)
@@ -461,7 +468,7 @@ class mainwindow(QMainWindow):
         self.P7_B_NEXT.clicked.connect(lambda: self.page7_change_p(self.current_p + 1))
         self.P7_B_PREVIOUS.clicked.connect(lambda: self.page7_change_p(self.current_p - 1))
         # 完成按钮
-        # self.P7_B_FINISH.clicked.connect(self.page7_B_FINISH_clicked)
+        self.P7_B_FINISH.clicked.connect(self.page7_B_FINISH_clicked)
         # 生成单页按钮
         # self.P7_B_CONVERT_ONE.clicked.connect(self.page7_B_CONVERT_ONE_clicked)
 
@@ -502,55 +509,79 @@ class mainwindow(QMainWindow):
             self.news_duration_list[self.current_p] = self.P7_LE_DURATION.text()
             self.news_check_list[self.current_p] = self.P7_CB_CHECK.isChecked()
 
-        # 清除config
-        self.f_log = open("video_config2.txt", "w", encoding='utf-8')
-        self.f_log.write("")
-        self.f_log.close()
+        # config
+        f_config = open("video_config2.txt", "w", encoding='utf-8')
+        folder = "cache2"
 
+        def config_write_picture(n, d):
+            f_config.write("file '" + folder + "/" + n + "'\n")
+            f_config.write("duration " + d + "\n")
+        
         # 封面
+        self.paint.handle_cover_picture2(self.news_title_t)
+        config_write_picture("cover_f.png", "5")
 
+        # 更多图片
+        for i in range(self.news_pic_num):
+            self.paint.paint_black_bg(folder, "img ("+str(i+1)+")", (935, 600))
+            config_write_picture("img ("+str(i+1)+")_b.png", "5")
 
         # 记录log
         self.write_log("\np:\n")
 
         for i in range(self.news_p_list_num):
-            self.page7_paint_p_picture(i)
+            if self.news_check_list[i]:
+                self.page7_paint_p_picture(i)
+                config_write_picture("p"+str(i+1)+".png", self.news_duration_list[i])
 
-        
+        f_config.close()
+
         # 生成视频
-        command = "ffmpeg -y -f concat -safe 0 -i video_config.txt output/output.wmv"
+        command = "ffmpeg -y -f concat -safe 0 -i video_config2.txt -b 1.5M output/output.wmv"
 
         if os.system(command) == 0:
             QMessageBox.about(self, "成功", "完成")
 
-    def write_config(self, str):
-        self.f_log = open("video_config2.txt", "a", encoding='utf-8')
-        self.f_log.write(str + "\n")
-        self.f_log.close()
+        # 打开log
+        command ="start log\\" + self.log_folder + "\\log.txt"
+        print(command)
+        os.system(command)
+
+        # 页面7 -> 页面5
+        self.change_to_next_page(self.B5)
 
     def page7_paint_p_picture(self, i):
-        c = self.news_comments[i]
-        ct = self.news_comments_t[i]
+        c = self.news_p_list[i]
+        ct = self.news_p_list_t[i]
 
         # 生成评论图片
         pixmap = QPixmap()
-        pixmap.load("template/comment_template2.png")
+        pixmap.load("template/detail_template.png")
         painter = QPainter()
         painter.begin(pixmap)
-        # author
-        painter.setFont(QFont("Noto Sans CJK Bold", 15))
-        painter.drawText(110, 55, a)
-        # comments & translate
-        painter.setFont(QFont("Noto Sans CJK Bold", 18))
+        # p & translate
+        if len(c) < 50:
+            painter.setFont(QFont("Noto Sans CJK Bold", 24))
+        elif len(c) < 200:
+            painter.setFont(QFont("Noto Sans CJK Bold", 18))
+        else:
+            painter.setFont(QFont("Noto Sans CJK Bold", 12))
+
         option = QTextOption(Qt.AlignJustify)
         option.setWrapMode(QTextOption.WordWrap)
-        painter.drawText(QtCore.QRectF(110, 75, 810, 355), c, option)
-        painter.setFont(QFont("Noto Sans CJK Bold", 21))
+        painter.drawText(QtCore.QRectF(20, 20, 895, 175), c, option)
         painter.setPen(Qt.red)
-        painter.drawText(QtCore.QRectF(110, 310, 800, 550), ct, option)
+
+        if len(ct) < 50:
+            painter.setFont(QFont("Noto Sans CJK Bold", 26))
+        elif len(ct) < 200:
+            painter.setFont(QFont("Noto Sans CJK Bold", 21))
+        else:
+            painter.setFont(QFont("Noto Sans CJK Bold", 15))
+        painter.drawText(QtCore.QRectF(20, 245, 895, 280), ct, option)
         
         painter.end()
-        pixmap.save("cache/comment"+str(i+1)+".png", "png")
+        pixmap.save("cache2/p"+str(i+1)+".png", "png")
 
         # 记录log
         # 写入评论

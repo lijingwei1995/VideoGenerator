@@ -72,7 +72,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="page">
      <widget class="QLabel" name="label">
@@ -525,7 +525,7 @@
      <widget class="QLabel" name="P5_L_HINT_2">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>260</x>
         <y>0</y>
         <width>191</width>
         <height>31</height>
@@ -562,6 +562,19 @@
         <width>641</width>
         <height>441</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="P5_B_CONVERT_VIDEO2">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>0</y>
+        <width>80</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>合成2</string>
       </property>
      </widget>
     </widget>
@@ -606,7 +619,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>70</y>
+        <y>80</y>
         <width>61</width>
         <height>31</height>
        </rect>
@@ -619,7 +632,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>100</y>
+        <y>110</y>
         <width>511</width>
         <height>31</height>
        </rect>
@@ -632,13 +645,39 @@
       <property name="geometry">
        <rect>
         <x>510</x>
-        <y>100</y>
+        <y>110</y>
         <width>75</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>确定</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>70</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>额外图片数：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="P6_LE_PIC_NUM">
+      <property name="geometry">
+       <rect>
+        <x>460</x>
+        <y>70</y>
+        <width>51</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
