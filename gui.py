@@ -376,7 +376,7 @@ class mainwindow(QMainWindow):
 
         # 第二个生成
         command2 = "ffmpeg -y -f concat -safe 0 -i video_config2.txt -b 1.5M output/output.wmv"
-        self.P5_B_CONVERT_VIDEO2.clicked.connect(lambda:os.system(command2))
+        self.P5_B_CONVERT_VIDEO2.clicked.connect(lambda: os.system(command2))
 
     def page5_B_CONVERT_VIDEO_clicked(self):
         command = "ffmpeg -y -f concat -safe 0 -i video_config.txt -b 1.5M output/output.wmv"
@@ -397,7 +397,8 @@ class mainwindow(QMainWindow):
     def set_actions_page6(self):
         def CHOOSE_clicked():
             try:
-                self.news_title, t, self.news_pic_num = self.spider.scrape_news_details(self.P6_LE_NEWS_URL.text())
+                self.detail_url = self.P6_LE_NEWS_URL.text()
+                self.news_title, t, self.news_pic_num = self.spider.scrape_news_details(self.detail_url)
                 self.news_title_t = self.translator.translate(self.news_title)
             except Exception as e:
                 QMessageBox.about(self, "错误", str(e))
@@ -455,6 +456,10 @@ class mainwindow(QMainWindow):
                 self.current_p = 0
                 self.news_title_t = self.P6_LE_TITLE.text()
                 self.page7_change_p(self.current_p)
+
+                # 写入标题log
+                self.write_log(self.detail_url+"\n\ntitle:："+self.news_title_t+"\n")
+
                 # 页面6 -> 页面7
                 self.change_to_next_page(self.B7)
 
